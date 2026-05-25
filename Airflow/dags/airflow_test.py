@@ -1,3 +1,4 @@
+##cbr.ru/scripts/XML_daily.asp?date_req=04/12/2021
 from airflow import DAG
 from datetime import datetime
 from airflow.operators.python import PythonOperator
@@ -51,3 +52,7 @@ catchup=True
     )
 
     gp_to_pg >> success_email
+
+
+
+
