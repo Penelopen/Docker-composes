@@ -1,6 +1,6 @@
 # 🐳 Конфигурации Docker Compose для Big Data
 
-Каждая директория содержит отлаженный `docker-compose.yml` манифест, готовый к запуску через `docker compose up -d` в Linux:
+Каждая директория содержит отлаженный `docker-compose.yml` манифест с проверенным образом, готовый к запуску через `docker compose up -d` в Linux:
 
 ### 📂 Структура репозитория
 
