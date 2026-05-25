@@ -6,7 +6,8 @@ from airflow.operators.python import PythonOperator
 from airflow.providers.postgres.hooks.postgres import PostgresHook
 
 defaults = {'owner': 'TonyB',
-    'start_date': datetime(2026, 2, 1)
+    'start_date': datetime(2026, 2, 1),
+    'retry_exponential_backoff': True
     }
 
 with DAG('load_cbr_to_postgres',
@@ -36,7 +37,7 @@ with DAG('load_cbr_to_postgres',
                 name = valute.find('Name').text
                 value = valute.find('Value').text.replace(',', '.')
                 res.append((v_id, num_code, char_code, name, value, formatted_cbr_date))
-        else: raise Exception(f"Ошибка API: {response.status_code}")
+        else: raise Exception(f"Ошибка API: {response.status_code}")  # noqa: E701
 
         return res
 

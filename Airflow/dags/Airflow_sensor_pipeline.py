@@ -15,7 +15,7 @@ def failure_alert(context):
         return
 
     hook = SmtpHook(smtp_conn_id='smtp_conn')
-    with hook.get_conn() as smtp_client:
+    with hook.get_conn() as smtp_client:  # noqa: F841
         hook.send_email_smtp(
             to=target_email,
             subject=f"🚨 Airflow Alert: {context['task_instance'].dag_id}.{context['task_instance'].task_id} Failed",
