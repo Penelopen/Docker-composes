@@ -1,8 +1,0 @@
-<clickhouse>
-    <profiles>
-        <default>
-            <!-- Этот тег заставит CH заменить значение, а не ругаться на дубликат -->
-            <allow_into_outfile replace="replace">1</allow_into_outfile>
-        </default>
-    </profiles>
-</clickhouse>

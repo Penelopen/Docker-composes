@@ -1,7 +1,0 @@
-<clickhouse>
-    <macros>
-        <shard>shard_01</shard>
-        <!-- Уникальное имя реплики для этой ноды -->
-        <replica>replica_A</replica>
-    </macros>
-</clickhouse>
