@@ -11,7 +11,7 @@ services:
       - "2222:22"   # SSH, если понадобится зайти внутрь на сервер
       - "5888:5888" # Порт для PXF
     environment:
-      - GPDATA_NUM_PRIMARY_SEGMENTS=2 # 2 сегмента = 2 шарда на одном ноуте
+      - GPDATA_NUM_PRIMARY_SEGMENTS=2 # 2 сегмента = 2 шарда на ПК
       - GP_PASSWORD=123456
     shm_size: '2gb' # Важно! Интерконнект активно использует общую память
     volumes:
