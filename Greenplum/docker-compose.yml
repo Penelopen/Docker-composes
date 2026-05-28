@@ -2,13 +2,13 @@ version: '3.8'
 
 services:
   greenplum:
-    # Используем проверенный образ для обучения (gpadmin,no password)
+    # Используем проверенный образ (gpadmin, no password)
     # image: sergeyosechkin/greenplum:latest
     image: pro100filipp/greenplum-with-pxf:latest
     container_name: greenplum
     ports:
       - "5433:5432" # Порт мастера для подключения через DBeaver/psql
-      - "2222:22"   # SSH, если захочешь зайти внутрь "как на сервер"
+      - "2222:22"   # SSH, если понадобится зайти внутрь на сервер
       - "5888:5888" # Порт для PXF
     environment:
       - GPDATA_NUM_PRIMARY_SEGMENTS=2 # 2 сегмента = 2 шарда на одном ноуте
