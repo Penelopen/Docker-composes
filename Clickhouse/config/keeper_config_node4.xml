@@ -1,0 +1,18 @@
+<clickhouse>
+    <!-- Мы УБРАЛИ блок <keeper_server>, чтобы нода не лезла в лидеры -->
+
+    <zookeeper>
+        <node>
+            <host>clickhouse-node1</host>
+            <port>9181</port>
+        </node>
+        <node>
+            <host>clickhouse-node2</host>
+            <port>9181</port>
+        </node>
+        <node>
+            <host>clickhouse-node3</host>
+            <port>9181</port>
+        </node>
+    </zookeeper>
+</clickhouse>

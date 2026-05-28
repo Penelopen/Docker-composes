@@ -1,0 +1,104 @@
+version: '3.1'
+
+services:
+  # Узел 1 кластера
+  clickhouse-node1:
+    image: clickhouse/clickhouse-server:latest
+    restart: always
+    container_name: clickhouse-node1
+    hostname: clickhouse-node1
+    ports:
+      - "8124:8123"
+      - "9001:9000"
+      - "9182:9181"
+      - "9445:9444"
+    volumes:
+      # Маппим файл конфигурации Keeper внутрь контейнера
+      - ./data/node1:/var/lib/clickhouse  # Теперь данные будут в папке проекта
+      - ./config/default-config.xml:/etc/clickhouse-server/config.d/default-config.xml
+      - ./config/ttl_logs.xml:/etc/clickhouse-server/config.d/ttl_logs.xml
+      - ./config/keeper_config_node1.xml:/etc/clickhouse-server/config.d/keeper_config.xml
+      - ./config/users.xml:/etc/clickhouse-server/users.d/users.xml
+      - ./config/macros_node1.xml:/etc/clickhouse-server/config.d/macros.xml
+      - ./config/remote_servers.xml:/etc/clickhouse-server/config.d/remote_servers.xml
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'     # Не больше половины ядра на ноду
+          memory: 1024M   # Не больше 1 ГБ оперативки
+          
+  # Узел 2 кластера
+  clickhouse-node2:
+    image: clickhouse/clickhouse-server:latest
+    restart: always
+    container_name: clickhouse-node2
+    hostname: clickhouse-node2
+    ports:
+      - "8125:8123"
+      - "9002:9000"
+      - "9183:9181"
+      - "9446:9444"
+    volumes:
+      # Маппим файл конфигурации Keeper внутрь контейнера
+      - ./data/node2:/var/lib/clickhouse  # Теперь данные будут в папке проекта
+      - ./config/default-config.xml:/etc/clickhouse-server/config.d/default-config.xml
+      - ./config/ttl_logs.xml:/etc/clickhouse-server/config.d/ttl_logs.xml
+      - ./config/keeper_config_node2.xml:/etc/clickhouse-server/config.d/keeper_config.xml
+      - ./config/users.xml:/etc/clickhouse-server/users.d/users.xml
+      - ./config/macros_node2.xml:/etc/clickhouse-server/config.d/macros.xml
+      - ./config/remote_servers.xml:/etc/clickhouse-server/config.d/remote_servers.xml
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'     # Не больше половины ядра на ноду
+          memory: 1024M   # Не больше 1 ГБ оперативки
+      
+  # Узел 3 кластера
+  clickhouse-node3:
+    image: clickhouse/clickhouse-server:latest
+    restart: always
+    container_name: clickhouse-node3
+    hostname: clickhouse-node3
+    ports:
+      - "8126:8123"
+      - "9003:9000"
+      - "9184:9181"
+      - "9447:9444"
+    volumes:
+      - ./data/node3:/var/lib/clickhouse  # Теперь данные будут в папке проекта
+      - ./config/default-config.xml:/etc/clickhouse-server/config.d/default-config.xml
+      - ./config/ttl_logs.xml:/etc/clickhouse-server/config.d/ttl_logs.xml
+      - ./config/keeper_config_node3.xml:/etc/clickhouse-server/config.d/keeper_config.xml
+      - ./config/users.xml:/etc/clickhouse-server/users.d/users.xml
+      - ./config/macros_node3.xml:/etc/clickhouse-server/config.d/macros.xml
+      - ./config/remote_servers.xml:/etc/clickhouse-server/config.d/remote_servers.xml
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'     # Не больше половины ядра на ноду
+          memory: 1024M   # Не больше 1 ГБ оперативки      
+
+  # Узел 4 кластера
+  clickhouse-node4:
+    image: clickhouse/clickhouse-server:latest
+    restart: always
+    container_name: clickhouse-node4
+    hostname: clickhouse-node4
+    ports:
+      - "8127:8123"
+      - "9004:9000"
+      - "9185:9181"
+      - "9448:9444"
+    volumes:
+      - ./data/node4:/var/lib/clickhouse  # Теперь данные будут в папке проекта
+      - ./config/default-config.xml:/etc/clickhouse-server/config.d/default-config.xml
+      - ./config/ttl_logs.xml:/etc/clickhouse-server/config.d/ttl_logs.xml
+      - ./config/keeper_config_node4.xml:/etc/clickhouse-server/config.d/keeper_config.xml
+      - ./config/users.xml:/etc/clickhouse-server/users.d/users.xml
+      - ./config/macros_node4.xml:/etc/clickhouse-server/config.d/macros.xml
+      - ./config/remote_servers.xml:/etc/clickhouse-server/config.d/remote_servers.xml
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'     # Не больше половины ядра на ноду
+          memory: 1024M   # Не больше 1 ГБ оперативки

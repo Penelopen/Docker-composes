@@ -1,0 +1,11 @@
+<clickhouse>
+ <listen_host>::</listen_host>
+ <metric_log>
+    <database>system</database>
+    <table>metric_log</table>
+    <!-- Записывать метрики раз в 60 секунд (вместо 1) -->
+    <collect_interval_milliseconds>60000</collect_interval_milliseconds>
+    <!-- Скидывать данные на диск раз в 10 минут -->
+    <flush_interval_milliseconds>600000</flush_interval_milliseconds>
+ </metric_log>
+</clickhouse>

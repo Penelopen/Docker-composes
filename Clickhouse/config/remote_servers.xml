@@ -1,0 +1,38 @@
+<yandex>
+    <remote_servers>
+        <my_docker_cluster>
+            <!-- Шард 1: Это Node 1 и Node 2 в Docker -->
+            <shard>
+                <replica>
+                    <host>clickhouse-node1</host>
+                    <port>9000</port>
+                    <user>default</user>
+                    <password>123456</password>
+                </replica>
+
+                <replica>
+                    <host>clickhouse-node2</host>
+                    <port>9000</port>
+                    <user>default</user>
+                    <password>123456</password>
+                </replica>
+            </shard>
+            <!-- Шард 2: Это Node 3 и Node 4 в Docker -->
+            <shard>
+                <replica>
+                    <host>clickhouse-node3</host>
+                    <port>9000</port>
+                    <user>default</user>
+                    <password>123456</password>
+                </replica>
+                
+                <replica>
+                    <host>clickhouse-node4</host>
+                    <port>9000</port>
+                    <user>default</user>
+                    <password>123456</password>
+                </replica>
+            </shard>
+        </my_docker_cluster>
+    </remote_servers>
+</yandex>
