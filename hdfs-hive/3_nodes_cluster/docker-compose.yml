@@ -1,0 +1,104 @@
+version: "3"
+
+services:
+  namenode:
+    image: bde2020/hadoop-namenode:2.0.0-hadoop2.7.4-java8
+    container_name: namenode
+    volumes:
+      - namenode:/hadoop/dfs/name
+    environment:
+      - CLUSTER_NAME=ilight
+    networks:
+      - hadoop-net
+    env_file:
+      - ./hadoop-hive.env
+    ports:
+      - "9001:9000"     # RPC порт
+      - "50070:50070"   # Web UI NameNode
+
+  datanode1:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop2.7.4-java8
+    container_name: datanode1
+    volumes:
+      - datanode1_data:/hadoop/dfs/data
+    env_file:
+      - ./hadoop-hive.env
+    environment:
+      SERVICE_PRECONDITION: "namenode:50070"
+    networks:
+      - hadoop-net
+    ports:
+      - "50075:50075"
+
+  datanode2:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop2.7.4-java8
+    container_name: datanode2
+    volumes:
+      - datanode2_data:/hadoop/dfs/data
+    env_file:
+      - ./hadoop-hive.env
+    environment:
+      SERVICE_PRECONDITION: "namenode:50070"
+    networks:
+      - hadoop-net
+    ports:
+      - "50076:50075"   # Внешний порт изменен, чтобы не было конфликта
+
+  datanode3:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop2.7.4-java8
+    container_name: datanode3
+    volumes:
+      - datanode3_data:/hadoop/dfs/data
+    env_file:
+      - ./hadoop-hive.env
+    environment:
+      SERVICE_PRECONDITION: "namenode:50070"
+    networks:
+      - hadoop-net
+    ports:
+      - "50077:50075"   # Внешний порт изменен, чтобы не было конфликта
+
+  hive-server:
+    image: bde2020/hive:2.3.2-postgresql-metastore
+    container_name: hive-server
+    env_file:
+      - ./hadoop-hive.env
+    environment:
+      HIVE_CORE_CONF_javax_jdo_option_ConnectionURL: "jdbc:postgresql://hive-metastore/metastore"
+      SERVICE_PRECONDITION: "hive-metastore:9083"
+    networks:
+      - hadoop-net    
+    ports:
+      - "10000:10000"
+
+  hive-metastore:
+    image: bde2020/hive:2.3.2-postgresql-metastore
+    container_name: hive-metastore
+    env_file:
+      - ./hadoop-hive.env
+    command: /opt/hive/bin/hive --service metastore
+    environment:
+      # Ждем старта NameNode, хотя бы первой DataNode и Postgres метастора
+      SERVICE_PRECONDITION: "namenode:50070 datanode1:50075 hive-metastore-postgresql:5432"
+    networks:
+      - hadoop-net
+    ports:
+      - "9083:9083"
+
+  hive-metastore-postgresql:
+    image: bde2020/hive-metastore-postgresql:2.3.0
+    container_name: hive-postgres
+    networks:
+      - hadoop-net
+
+networks:
+  hadoop-net:
+    name: airflow_default
+    external: true
+
+volumes:
+  namenode:
+  datanode1_data:
+  datanode2_data:
+  datanode3_data:
+  pg_data:
