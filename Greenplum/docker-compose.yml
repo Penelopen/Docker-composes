@@ -2,23 +2,34 @@ version: '3.8'
 
 services:
   greenplum:
-    # Используем проверенный образ (gpadmin, no password)
     # image: sergeyosechkin/greenplum:latest
     image: pro100filipp/greenplum-with-pxf:latest
     container_name: greenplum
+    hostname: 02967519d28d
     ports:
       - "5433:5432" # Порт мастера для подключения через DBeaver/psql
-      - "2222:22"   # SSH, если понадобится зайти внутрь на сервер
+      - "2222:22"   # SSH, если нужно зайти внутрь "как на сервер"
       - "5888:5888" # Порт для PXF
+      - "8081:8081" # Порт для gpfdist
     environment:
-      - GPDATA_NUM_PRIMARY_SEGMENTS=2 # 2 сегмента = 2 шарда на ПК
+      - GPDATA_NUM_PRIMARY_SEGMENTS=2 # 2 сегмента = 2 шарда на одном ноуте
       - GP_PASSWORD=123456
     shm_size: '2gb' # Важно! Интерконнект активно использует общую память
     volumes:
-      # Пробрасываем папку для данных, чтобы они не пропадали
       - ./gpdata/segments:/srv/gpdata
       - ./gpdata/master:/srv/gpmaster
+      # ОБЩАЯ ПАПКА
+      - /home/tonyb/Desktop/shared_traffic:/tmp/gp_traffic
     deploy:
       resources:
         limits:
-          memory: 4gb # Ограничиваем аппетит GP, чтобы VMware не зависла
+          memory: 4gb # Ограничиваем аппетит GP
+    networks:
+      - default
+      - airflow_default
+
+# ОБЪЯВЛЯЕМ СЕТЬ AIRFLOW ВНЕШНЕЙ, ЧТОБЫ ДОКЕР ЕЁ НЕ УДАЛИЛ
+networks:
+  default:
+  airflow_default:
+    external: true
