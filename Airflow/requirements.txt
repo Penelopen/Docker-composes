@@ -3,3 +3,4 @@ transliterate
 apache-airflow-providers-apache-kafka==1.4.1
 hdfs==2.7.3
 psycopg2-binary==2.9.9
+confluent-kafka
