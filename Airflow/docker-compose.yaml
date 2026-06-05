@@ -171,6 +171,8 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
+    volumes:
+      - /home/tonyb/Desktop/shared_traffic:/tmp/airflow/traffic
 
   airflow-triggerer:
     <<: *airflow-common
