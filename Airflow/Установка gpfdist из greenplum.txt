@@ -1,0 +1,33 @@
+# 1. Папки на воркере
+docker exec -it -u root airflow-airflow-worker-1 mkdir -p /opt/airflow/gp_libs /tmp/gp_traffic/data
+
+# 2. Бинарник
+docker cp greenplum:/usr/local/greenplum-db/bin/gpfdist ./gpfdist
+docker cp ./gpfdist airflow-airflow-worker-1:/usr/local/bin/gpfdist && rm -f ./gpfdist
+docker exec -it -u root airflow-airflow-worker-1 chmod +x /usr/local/bin/gpfdist
+
+# 3. Выкачиваем либы из GP
+docker cp greenplum:/usr/lib/x86_64-linux-gnu/libssl.so.1.1 ./libssl.so
+docker cp greenplum:/usr/lib/x86_64-linux-gnu/libcrypto.so.1.1 ./libcrypto.so
+docker cp greenplum:/usr/lib/x86_64-linux-gnu/libevent-2.1.so.6.0.2 ./libevent.so
+docker cp greenplum:/usr/lib/x86_64-linux-gnu/libyaml-0.so.2.0.5 ./libyaml.so
+docker cp greenplum:/usr/lib/x86_64-linux-gnu/libapr-1.so.0.6.3 ./libapr.so
+
+# 4. Заливаем либы в воркер
+docker cp ./libssl.so airflow-airflow-worker-1:/opt/airflow/gp_libs/libssl.so.1.1
+docker cp ./libcrypto.so airflow-airflow-worker-1:/opt/airflow/gp_libs/libcrypto.so.1.1
+docker cp ./libevent.so airflow-airflow-worker-1:/opt/airflow/gp_libs/libevent-2.1.so.6
+docker cp ./libyaml.so airflow-airflow-worker-1:/opt/airflow/gp_libs/libyaml-0.so.2
+docker cp ./libapr.so airflow-airflow-worker-1:/opt/airflow/gp_libs/libapr-1.so.0
+
+# 5. Чистим хост
+rm -f ./libssl.so ./libcrypto.so ./libevent.so ./libyaml.so ./libapr.so
+
+# 6. Гасим старый процесс, если залип
+docker exec -it airflow-airflow-worker-1 bash -c "kill \$(cat /proc/[0-9]*/cmdline 2>/dev/null | grep -a gpfdist | awk '{print \$1}' | head -n 1) 2>/dev/null || true"
+
+# 7. Запуск на 8082 порту
+docker exec -d airflow-airflow-worker-1 env LD_LIBRARY_PATH=/opt/airflow/gp_libs:/lib/x86_64-linux-gnu gpfdist -d /tmp/gp_traffic/data -p 8082
+
+# 8. Проверка
+sleep 1 && curl -I http://localhost:8082/
