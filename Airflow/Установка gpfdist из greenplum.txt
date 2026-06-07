@@ -26,8 +26,8 @@ rm -f ./libssl.so ./libcrypto.so ./libevent.so ./libyaml.so ./libapr.so
 # 6. Гасим старый процесс, если залип
 docker exec -it airflow-airflow-worker-1 bash -c "kill \$(cat /proc/[0-9]*/cmdline 2>/dev/null | grep -a gpfdist | awk '{print \$1}' | head -n 1) 2>/dev/null || true"
 
-# 7. Запуск на 8082 порту
-docker exec -d airflow-airflow-worker-1 env LD_LIBRARY_PATH=/opt/airflow/gp_libs:/lib/x86_64-linux-gnu gpfdist -d /tmp/gp_traffic/data -p 8082
+# 7. Запуск на 8082 порту под все сети
+docker exec -d airflow-airflow-worker-1 env LD_LIBRARY_PATH=/opt/airflow/gp_libs:/lib/x86_64-linux-gnu gpfdist -d /tmp/data -p 8082 -b 0.0.0.0
 
 # 8. Проверка
 sleep 1 && curl -I http://localhost:8082/
