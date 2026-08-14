@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  # 1. Демон-экспортер (стучится в локальный Postgres)
+  postgres_exporter:
+    image: prometheuscommunity/postgres-exporter:v0.15.0
+    container_name: postgres_exporter
+    environment:
+      # host.docker.internal — это адрес хоста изнутри контейнера.
+      # ЗАМЕНИТЬ: 'user:password' и '...5432/db_name...' на данные базы!
+      DATA_SOURCE_NAME: "postgresql://test2:123456@host.docker.internal:5432/test1?sslmode=disable"
+    ports:
+      - "9187:9187"
+    extra_hosts:
+      - "host.docker.internal:host-gateway" # Разрешает доступ к хосту
+
+  # 2. Компонент оповещений Alertmanager (почта Яндекса)
+  alertmanager:
+    image: prom/alertmanager:v0.25.0
+    container_name: alertmanager
+    volumes:
+      - ./postgres-alerts/alertmanager.yml:/etc/alertmanager/alertmanager.yml # Пробрасываем настройки почты
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
+    ports:
+      - "9093:9093"
+
+  # 3. База данных Prometheus
+  prometheus:
+    image: prom/prometheus:v2.45.0
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./postgres-alerts/alert_rules.yml:/etc/prometheus/alert_rules.yml # Пробрасываем правила триггеров
+    ports:
+      - "9090:9090"
+    depends_on:
+      - postgres_exporter
+      - alertmanager # Прометеус ждет запуска экспортера и алертменеджера
+
+  # 4. Визуализация Grafana
+  grafana:
+    image: grafana/grafana:10.0.0
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus

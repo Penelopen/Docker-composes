@@ -1,0 +1,22 @@
+global:
+  resolve_timeout: 1m		# Считать, что всё починено, если в течение 1 минуты от Prometheus нет алертов
+  # Настройки почтового сервера (SMTP)
+  smtp_from: 'silapil@yandex.ru'	           # Ящик с кого летят письма
+  smtp_smarthost: 'smtp.yandex.ru:587'         # Адрес почтового сервера
+  smtp_auth_username: 'silapil@yandex.ru'	   # Логин от почты
+  smtp_auth_password: 'ikollyjyclrpsrxd'	   # Пароль / пароль приложения
+  smtp_require_tls: true
+
+route:
+  receiver: 'email-alerts'
+  group_wait: 20s           # Задержка первой отправки, чтобы собрать сопутствующие аварии в одно письмо
+  group_interval: 5m        # Собрать новые алерты, что появились после первого письма и дослать вторым
+
+receivers:
+- name: 'email-alerts'
+  email_configs:
+  - to: '7029293@gmail.com'	           		    # Куда отправлять
+    send_resolved: true                         # Присылать письмо, когда авария закончилась
+    html: '{{ range .Alerts }}<h3>[{{ .Status | toUpper }}] {{ .Annotations.summary }}</h3><p>{{ .Annotations.description }}</p>{{ end }}'
+
+

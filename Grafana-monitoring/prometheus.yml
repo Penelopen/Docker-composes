@@ -1,0 +1,18 @@
+global:
+  scrape_interval: 15s # Период запроса новых статистических данных
+
+# 1. Добавляем путь к файлу с триггерами (правилами алертов)
+rule_files:
+  - "alert_rules.yml"
+
+# 2. Указываем, куда пересылать сработавшие алерты
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - 'alertmanager:9093' # Имя контейнера Алертменеджера в докере
+
+scrape_configs:
+  - job_name: 'postgres-monitoring'
+    static_configs:
+      - targets: ['postgres_exporter:9187'] # Прометеус будет стучаться в контейнер Экспортера

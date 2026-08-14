@@ -1,0 +1,22 @@
+groups:
+  - name: postgres_alerts
+    rules:
+      # 1. Проверяем, доступен ли Экспортер базы данных
+      - alert: PostgresDown
+        expr: pg_up == 0
+        for: 1m # Красная тревога через 1 минуту после того, как база упадет
+        labels:
+          severity: critical
+        annotations:
+          summary: "База данных PostgreSQL недоступна!"
+          description: "PostgresExporter не может подключиться к БД уже больше 1 минуты. Возможно, база упала."
+
+      # 2. Проверяем количество активных подключений
+      - alert: PostgresTooManyConnections
+        expr: sum(pg_stat_database_numbackends) > 100
+        for: 2m # Красная тревога через 2 минуты после превышения количества поделючений
+        labels:
+          severity: warning
+        annotations:
+          summary: "Слишком много подключений к Postgres"
+          description: "Количество активных сессий превысило 100 (текущее значение: {{ $value }}). Проверьте утечку соединений."
